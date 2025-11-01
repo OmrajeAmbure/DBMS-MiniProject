@@ -8,28 +8,51 @@
         <span class="me-3">Signed in as <strong>{{ username }}</strong> ({{ role }})</span>
       </div>
     </div>
-    <div class="row g-3">
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 text-center shadow-sm">
           <h5>Total Students</h5>
-          <div id="total-students">—</div>
+          <div id="total-students" class="fw-bold fs-4">—</div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 text-center shadow-sm">
           <h5>Admins</h5>
-          <div id="total-admins">—</div>
+          <div id="total-admins" class="fw-bold fs-4">—</div>
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card p-3">
+        <div class="card p-3 text-center shadow-sm">
           <h5>Users</h5>
-          <div id="total-users">—</div>
+          <div id="total-users" class="fw-bold fs-4">—</div>
         </div>
       </div>
     </div>
+
+    <!-- Graphs Section -->
+    <div class="row g-4">
+      <div class="col-md-6 mb-4">
+        <div class="card p-3 shadow-sm">
+          <h5 class="text-center">Admins vs Users</h5>
+          <canvas id="roleChart" style="max-width: 235px; height: 235px; margin: auto;"></canvas>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+          <h5 class="text-center">System Overview</h5>
+          <canvas id="overviewChart"></canvas>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 async function loadStats() {
@@ -37,10 +60,39 @@ async function loadStats() {
   if (!res.ok) return;
   const { total_students, total_admins, total_users } = await res.json();
 
+  // Update UI Stats
   document.getElementById('total-students').innerText = total_students;
   document.getElementById('total-admins').innerText = total_admins;
   document.getElementById('total-users').innerText = total_users;
+
+  // Pie Chart - Admins vs Users
+  new Chart(document.getElementById('roleChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Admins', 'Users'],
+      datasets: [{
+        data: [total_admins, total_users],
+        backgroundColor: ['#007bff', '#28a745']
+      }]
+    }
+  });
+
+  // Bar Chart - Overview
+  new Chart(document.getElementById('overviewChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Students', 'Admins', 'Users'],
+      datasets: [{
+        label: 'Count',
+        data: [total_students, total_admins, total_users],
+        backgroundColor: ['#ffc107', '#007bff', '#28a745']
+      }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+  });
+
 }
 loadStats();
 </script>
+
 {% endblock %}
