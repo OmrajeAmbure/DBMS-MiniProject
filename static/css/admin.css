@@ -1,0 +1,122 @@
+/* admin.css — Modern Blue theme */
+
+:root {
+    --blue-600: #0d6efd;
+    --blue-500: #1976d2;
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --muted: #6c757d;
+}
+
+html,
+body {
+    height: 100%;
+    background: var(--bg);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+#wrapper {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* Sidebar */
+#sidebar-wrapper {
+    width: 260px;
+    transition: width .25s ease;
+    background: linear-gradient(180deg, rgba(13, 110, 253, 0.95), rgba(25, 118, 210, 0.95));
+    color: #fff;
+    min-height: 100vh;
+}
+
+#sidebar-wrapper.collapsed {
+    width: 68px;
+}
+
+.sidebar-brand {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    color: rgba(255, 255, 255, 0.95);
+    background: transparent;
+    padding: 14px 20px;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Page content */
+#page-content-wrapper {
+    flex: 1;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    background: var(--card);
+    box-shadow: 0 6px 18px rgba(29, 41, 51, 0.06);
+}
+
+.card .card-title {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Dashboard widgets */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-num {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--blue-500);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* Table & typography tweaks */
+.table thead th {
+    background: #f7f9fc;
+    border-bottom: none;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+/* Responsive small screen behavior */
+@media (max-width:768px) {
+    #sidebar-wrapper {
+        display: none;
+    }
+
+    #sidebar-wrapper.collapsed {
+        display: none;
+    }
+}

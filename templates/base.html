@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SMS — Modern Blue</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Your admin CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+  <!-- Sidebar -->
+  <aside id="sidebar-wrapper" class="bg-primary text-white">
+    <div class="sidebar-brand px-4 py-3">
+      <h4 class="m-0">SMS</h4>
+      <small class="opacity-75">Student Management</small>
+    </div>
+    <nav class="list-group list-group-flush">
+      <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-transparent text-white">Dashboard</a>
+      <a href="{{ url_for('students_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Students</a>
+      <a href="{{ url_for('add_student_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Add Student</a>
+      <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-transparent text-white">Logout</a>
+    </nav>
+  </aside>
+
+  <!-- Page content -->
+  <div id="page-content-wrapper" class="w-100">
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+      <div class="container-fluid">
+        <button class="btn btn-outline-primary" id="sidebarToggle">☰</button>
+        <div class="ms-auto d-flex align-items-center">
+          <div class="me-3 small text-muted d-none d-md-block">Signed in as <strong>{{ username or 'Guest' }}</strong></div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main container -->
+    <div class="container-fluid p-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for cat, msg in messages %}
+            <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+              {{ msg }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+  const sb = document.getElementById('sidebar-wrapper');
+  if (sb.classList.contains('collapsed')) sb.classList.remove('collapsed');
+  else sb.classList.add('collapsed');
+});
+</script>
+</body>
+</html>

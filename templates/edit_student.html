@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-9">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title">Edit Student</h4>
+
+        <form id="editForm">
+          <input type="hidden" id="sid" value="{{ sid }}">
+
+          <div class="row g-2">
+            <div class="col-md-6">
+              <input class="form-control" id="name" placeholder="Full Name" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" id="email" type="email" placeholder="Email" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" id="rollno" placeholder="Roll No" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" id="subject" placeholder="Subject" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" id="phone" placeholder="Phone (optional)">
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" id="unit_test1_marks" type="number" placeholder="Unit Test 1 Marks (optional)">
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" id="unit_test2_marks" type="number" placeholder="Unit Test 2 Marks (optional)">
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <button class="btn btn-success" type="submit">Update</button>
+            <a href="{{ url_for('students_ui') }}" class="btn btn-secondary ms-2">Cancel</a>
+          </div>
+        </form>
+
+        <div id="msg" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadStudent() {
+  const sid = document.getElementById('sid').value;
+  const res = await fetch('/api/students/' + sid, { credentials: 'same-origin' });
+  if (!res.ok) return;
+
+  const s = await res.json();
+  document.getElementById('name').value = s.name;
+  document.getElementById('email').value = s.email;
+  document.getElementById('rollno').value = s.rollno;
+  document.getElementById('subject').value = s.subject;
+  document.getElementById('phone').value = s.phone || '';
+  document.getElementById('unit_test1_marks').value = s.unit_test1_marks ?? '';
+  document.getElementById('unit_test2_marks').value = s.unit_test2_marks ?? '';
+}
+
+document.getElementById('editForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const sid = document.getElementById('sid').value;
+  const data = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    rollno: document.getElementById('rollno').value,
+    subject: document.getElementById('subject').value,
+    phone: document.getElementById('phone').value,
+    unit_test1_marks: document.getElementById('unit_test1_marks').value || null,
+    unit_test2_marks: document.getElementById('unit_test2_marks').value || null
+  };
+
+  const res = await fetch('/api/students/' + sid, {
+    method: 'PUT',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const j = await res.json();
+
+  if (res.ok) window.location = '/students-ui';
+  else document.getElementById('msg').innerHTML = `<div class="alert alert-danger">${j.msg || j.error}</div>`;
+});
+
+loadStudent();
+</script>
+{% endblock %}

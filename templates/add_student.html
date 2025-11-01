@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-9">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title">Add Student</h4>
+        
+        <form id="addForm">
+          <div class="row g-2">
+
+            <div class="col-md-6">
+              <input class="form-control" name="name" placeholder="Full name" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" name="email" type="email" placeholder="Email" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" name="rollno" placeholder="Roll No" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" name="phone" placeholder="Phone">
+            </div>
+
+            <!-- ✅ Subject Field -->
+            <div class="col-md-6">
+              <input class="form-control" name="subject" placeholder="Subject" required>
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" name="unit_test1_marks" type="number" placeholder="Unit Test 1">
+            </div>
+
+            <div class="col-md-6">
+              <input class="form-control" name="unit_test2_marks" type="number" placeholder="Unit Test 2">
+            </div>
+
+          </div>
+
+          <div class="mt-3">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a href="{{ url_for('students_ui') }}" class="btn btn-secondary ms-2">Cancel</a>
+          </div>
+
+        </form>
+
+        <div id="msg" class="mt-2"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('addForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = e.target;
+
+  const data = {
+    name: f.name.value,
+    email: f.email.value,
+    rollno: f.rollno.value,
+    phone: f.phone.value,
+    subject: f.subject.value,   // ✅ Now subject always exists
+    unit_test1_marks: f.unit_test1_marks.value ? Number(f.unit_test1_marks.value) : null,
+    unit_test2_marks: f.unit_test2_marks.value ? Number(f.unit_test2_marks.value) : null
+  };
+
+  const res = await fetch('/api/students', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const j = await res.json();
+
+  if (res.ok) {
+    window.location = '/students-ui';
+  } else {
+    document.getElementById('msg').innerHTML =
+      `<div class="alert alert-danger">${j.msg || j.error}</div>`;
+  }
+});
+</script>
+
+{% endblock %}

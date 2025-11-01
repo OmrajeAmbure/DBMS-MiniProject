@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height:70vh">
+  <div class="card p-4" style="width:420px">
+    <h4 class="mb-3">Register</h4>
+    <form method="post" action="/register">
+      <div class="mb-3"><input class="form-control" name="username" placeholder="Username" required></div>
+      <div class="mb-3"><input class="form-control" name="email" type="email" placeholder="Email" required></div>
+      <div class="mb-3"><input class="form-control" name="role" type="text" placeholder="Role" required></div>
+      <div class="mb-3"><input class="form-control" name="password" type="password" placeholder="Password" required></div>
+      <button class="btn btn-success w-100">Register</button>
+    </form>
+    <div class="mt-3 text-center"><small>Already a user? <a href="/login">Login</a></small></div>
+  </div>
+</div>
+{% endblock %}
