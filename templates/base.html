@@ -27,7 +27,11 @@
       <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-transparent text-white">Dashboard</a>
       <a href="{{ url_for('students_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Students</a>
       <a href="{{ url_for('add_student_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Add Student</a>
-      <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-transparent text-white">Logout</a>
+      {% if username %}
+        <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-transparent text-white">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="list-group-item list-group-item-action bg-transparent text-white">Login</a>
+      {% endif %}
     </nav>
   </aside>
 

@@ -1,56 +1,165 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h3>Students</h3>
   <a href="{{ url_for('add_student_ui') }}" class="btn btn-primary">+ Add Student</a>
 </div>
 
+<div class="row mb-4">
+  <div class="col-md-4">
+    <label class="form-label fw-semibold">Filter by Subject:</label>
+    <select id="subjectFilter" class="form-select" onchange="applyFilter()">
+      <option value="All">All Subjects</option>
+    </select>
+  </div>
+</div>
+
 <div id="students-table">Loading...</div>
 
+<hr class="my-4">
+
+<h4 class="mb-3">Marks Analytics</h4>
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h6 class="text-center">Average UT1 vs UT2 (Selected Subject)</h6>
+      <div style="height:240px;">
+        <canvas id="avgChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card p-3">
+      <h6 class="text-center">Performance Distribution (UT1)</h6>
+      <div style="height:240px; align-self: center;">
+        <canvas id="distChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
+let allStudents = [];
+let avgChart, distChart;
+
 async function loadStudents() {
   const res = await fetch('/api/students', { credentials: 'same-origin' });
   if (!res.ok) {
-    document.getElementById('students-table').innerHTML = '<div class="alert alert-danger">Failed to load students. Please login.</div>';
+    document.getElementById('students-table').innerHTML =
+      '<div class="alert alert-danger">Failed to load students. Please login.</div>';
     return;
   }
-  const rows = await res.json();
-  if (!Array.isArray(rows) || rows.length === 0) {
+
+  allStudents = await res.json();
+  if (!Array.isArray(allStudents) || allStudents.length === 0) {
     document.getElementById('students-table').innerHTML = '<p>No students yet.</p>';
     return;
   }
-  let html = '<div class="table-responsive"><table class="table table-bordered"><thead class="table-light"><tr><th>ID</th><th>Name</th><th>Roll No</th><th>Email</th><th>Phone</th><th>UT1</th><th>UT2</th><th>Created By</th><th>Actions</th></tr></thead><tbody>';
+
+  fillSubjectDropdown();
+  applyFilter(); // initial table + charts
+}
+
+// Fill dropdown subjects
+function fillSubjectDropdown() {
+  const subjects = [...new Set(allStudents.map(s => s.subject))];
+  const select = document.getElementById('subjectFilter');
+  subjects.forEach(sub => {
+    const option = document.createElement('option');
+    option.value = sub;
+    option.textContent = sub;
+    select.appendChild(option);
+  });
+}
+
+// Apply Subject Filter
+function applyFilter() {
+  const selected = document.getElementById('subjectFilter').value;
+  const filtered = selected === "All" ? allStudents : allStudents.filter(s => s.subject === selected);
+
+  updateTable(filtered);
+  updateCharts(filtered);
+}
+
+// Update Student Table
+function updateTable(rows) {
+  let html = `
+  <div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th><th>Name</th><th>Roll No</th><th>Email</th><th>Phone</th>
+        <th>Subject</th><th>UT1</th><th>UT2</th><th>Actions</th>
+      </tr>
+    </thead><tbody>`;
+
   for (const s of rows) {
-    html += `<tr>
-      <td>${s.id}</td>
-      <td>${s.name}</td>
-      <td>${s.rollno}</td>
-      <td>${s.email}</td>
-      <td>${s.phone || ''}</td>
-      <td>${s.unit_test1_marks ?? ''}</td>
-      <td>${s.unit_test2_marks ?? ''}</td>
-      <td>${s.created_by ?? ''}</td>
-      <td>
-        <a class="btn btn-sm btn-outline-success me-1" href="/edit-student-ui/${s.id}">Edit</a>
-        <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${s.id})">Delete</button>
-      </td>
-    </tr>`;
+    html += `
+      <tr>
+        <td>${s.id}</td>
+        <td>${s.name}</td>
+        <td>${s.rollno}</td>
+        <td>${s.email}</td>
+        <td>${s.phone || ''}</td>
+        <td>${s.subject}</td>
+        <td>${s.unit_test1_marks ?? ''}</td>
+        <td>${s.unit_test2_marks ?? ''}</td>
+        <td>
+          <a class="btn btn-sm btn-outline-success me-1" href="/edit-student-ui/${s.id}">Edit</a>
+          <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${s.id})">Delete</button>
+        </td>
+      </tr>`;
   }
-  html += '</tbody></table></div>';
+
+  html += `</tbody></table></div>`;
   document.getElementById('students-table').innerHTML = html;
 }
 
+// Update charts
+function updateCharts(rows) {
+  const ut1 = rows.map(s => s.unit_test1_marks || 0);
+  const ut2 = rows.map(s => s.unit_test2_marks || 0);
+
+  const avgUT1 = ut1.reduce((a,b)=>a+b,0) / rows.length || 0;
+  const avgUT2 = ut2.reduce((a,b)=>a+b,0) / rows.length || 0;
+
+  const poor = ut1.filter(m => m <= 10).length;
+  const avg = ut1.filter(m => m > 10 && m <= 20).length;
+  const good = ut1.filter(m => m > 20).length;
+
+  if (avgChart) avgChart.destroy();
+  if (distChart) distChart.destroy();
+
+  avgChart = new Chart(document.getElementById('avgChart'), {
+    type: 'bar',
+    data: {
+      labels: ['UT1', 'UT2'],
+      datasets: [{ data: [avgUT1, avgUT2] }]
+    }
+  });
+
+  distChart = new Chart(document.getElementById('distChart'), {
+    type: 'pie',
+    data: {
+      labels: ['Poor (0-10)', 'Average (11-20)', 'Good (20+)'],
+      datasets: [{ data: [poor, avg, good] }]
+    }
+  });
+}
+
+// Delete student
 async function deleteStudent(id) {
   if (!confirm('Delete this student?')) return;
-  const res = await fetch('/api/students/' + id, { method: 'DELETE', credentials: 'same-origin' });
-  if (res.ok) {
-    loadStudents();
-  } else {
-    const j = await res.json();
-    alert(j.msg || 'Failed to delete');
-  }
+  const res = await fetch('/api/students/' + id, { method:'DELETE', credentials:'same-origin' });
+  if (res.ok) loadStudents();
+  else alert('Failed to delete.');
 }
 
 loadStudents();
 </script>
+
 {% endblock %}

@@ -150,13 +150,25 @@ def students_ui():
 @app.route("/add-student-ui")
 @jwt_required()
 def add_student_ui():
-    return render_template("add_student.html")
+    claims = get_jwt()
+    return render_template(
+        "add_student.html",
+        username=claims.get("username"),
+        role=claims.get("role")
+    )
+
 
 
 @app.route("/edit-student-ui/<int:sid>")
 @jwt_required()
 def edit_student_ui(sid):
-    return render_template("edit_student.html", sid=sid)
+    claims = get_jwt()
+    return render_template(
+        "edit_student.html",
+        sid=sid,
+        username=claims.get("username"),
+        role=claims.get("role")
+    )
 
 
 
