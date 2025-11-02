@@ -24,9 +24,15 @@
       <small class="opacity-75">Student Management</small>
     </div>
     <nav class="list-group list-group-flush">
-      <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-transparent text-white">Dashboard</a>
-      <a href="{{ url_for('students_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Students</a>
-      <a href="{{ url_for('add_student_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Add Student</a>
+      {% if username %}
+        <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-transparent text-white">Dashboard</a>
+        <a href="{{ url_for('students_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Students</a>
+        <a href="{{ url_for('add_student_ui') }}" class="list-group-item list-group-item-action bg-transparent text-white">Add Student</a>
+      {% else %}
+        <a class="list-group-item bg-transparent text-white disabled" tabindex="-1" aria-disabled="true">Dashboard</a>
+        <a class="list-group-item bg-transparent text-white disabled" tabindex="-1" aria-disabled="true">Students</a>
+        <a class="list-group-item bg-transparent text-white disabled" tabindex="-1" aria-disabled="true">Add Student</a>
+      {% endif %}
       {% if username %}
         <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-transparent text-white">Logout</a>
       {% else %}
