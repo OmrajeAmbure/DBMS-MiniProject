@@ -59,9 +59,9 @@ async function loadStudent() {
 
   const s = await res.json();
   document.getElementById('name').value = s[1];
-  document.getElementById('email').value = s[3];
-  document.getElementById('rollno').value = s[2];
-  document.getElementById('subject').value = s[5];
+  document.getElementById('email').value = s[2];
+  document.getElementById('rollno').value = s[3];
+  document.getElementById('subject').value = s[9];
   document.getElementById('phone').value = s[4] || '';
   document.getElementById('unit_test1_marks').value = s[6] ?? '';
   document.getElementById('unit_test2_marks').value = s[7] ?? '';

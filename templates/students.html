@@ -66,7 +66,7 @@ async function loadStudents() {
 
 // Fill dropdown subjects
 function fillSubjectDropdown() {
-  const subjects = [...new Set(allStudents.map(s => s[5]))];
+  const subjects = [...new Set(allStudents.map(s => s[9]))];
   const select = document.getElementById('subjectFilter');
   subjects.forEach(sub => {
     const option = document.createElement('option');
@@ -79,7 +79,7 @@ function fillSubjectDropdown() {
 // Apply Subject Filter
 function applyFilter() {
   const selected = document.getElementById('subjectFilter').value;
-  const filtered = selected === "All" ? allStudents : allStudents.filter(s => s[5] === selected);
+  const filtered = selected === "All" ? allStudents : allStudents.filter(s => s[9] === selected);
 
   updateTable(filtered);
   updateCharts(filtered);
@@ -112,9 +112,9 @@ function updateTable(rows) {
         <td>${s[2]}</td>
         <td>${s[3]}</td>
         <td>${s[4] || ''}</td>
-        <td>${s[5]}</td>
+        <td>${s[9]}</td>
+        <td>${s[5] ?? ''}</td>
         <td>${s[6] ?? ''}</td>
-        <td>${s[7] ?? ''}</td>
         <td>
           <a class="btn btn-sm btn-outline-success me-1" href="/edit-student-ui/${s[0]}">Edit</a>
           <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent(${s[0]})">Delete</button>
@@ -128,8 +128,8 @@ function updateTable(rows) {
 
 // Update charts
 function updateCharts(rows) {
-  const ut1 = rows.map(s => s[6] || 0);
-  const ut2 = rows.map(s => s[7] || 0);
+  const ut1 = rows.map(s => s[5] || 0);
+  const ut2 = rows.map(s => s[6] || 0);
 
   const avgUT1 = ut1.reduce((a,b)=>a+b,0) / rows.length || 0;
   const avgUT2 = ut2.reduce((a,b)=>a+b,0) / rows.length || 0;
