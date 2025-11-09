@@ -58,13 +58,13 @@ async function loadStudent() {
   if (!res.ok) return;
 
   const s = await res.json();
-  document.getElementById('name').value = s.name;
-  document.getElementById('email').value = s.email;
-  document.getElementById('rollno').value = s.rollno;
-  document.getElementById('subject').value = s.subject;
-  document.getElementById('phone').value = s.phone || '';
-  document.getElementById('unit_test1_marks').value = s.unit_test1_marks ?? '';
-  document.getElementById('unit_test2_marks').value = s.unit_test2_marks ?? '';
+  document.getElementById('name').value = s[1];
+  document.getElementById('email').value = s[3];
+  document.getElementById('rollno').value = s[2];
+  document.getElementById('subject').value = s[5];
+  document.getElementById('phone').value = s[4] || '';
+  document.getElementById('unit_test1_marks').value = s[6] ?? '';
+  document.getElementById('unit_test2_marks').value = s[7] ?? '';
 }
 
 document.getElementById('editForm').addEventListener('submit', async (e) => {
