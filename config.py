@@ -2,7 +2,7 @@ import os
 import psycopg2
 from urllib.parse import urlparse
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://sms_db_erov_user:uPwjVlCSQF55yJylsvTCmr5d6aCiGCg1@dpg-d481fgi4d50c738g01j0-a/sms_db_erov")
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://sms_db_erov_user:uPwjVlCSQF55yJylsvTCmr5d6aCiGCg1@dpg-d481fgi4d50c738g01j0-a.oregon-postgres.render.com/sms_db_erov")
 
 if DATABASE_URL:
     result = urlparse(DATABASE_URL)
