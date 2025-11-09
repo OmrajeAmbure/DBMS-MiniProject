@@ -193,13 +193,13 @@ def api_get_students():
     cur = conn.cursor()
     try:
         if role == "admin":
-            cur.execute("SELECT * FROM students ORDER BY id DESC")
+            cur.execute("SELECT * FROM students")
             rows = cur.fetchall()
         elif role == "user":
-            cur.execute("SELECT * FROM students ORDER BY id DESC")
+            cur.execute("SELECT * FROM students")
             rows = cur.fetchall()
         else:
-            cur.execute("SELECT * FROM students WHERE created_by=%s ORDER BY id DESC", (user_id,))
+            cur.execute("SELECT * FROM students WHERE created_by=%s", (user_id,))
             rows = cur.fetchall()
         return jsonify(rows), 200
     finally:
