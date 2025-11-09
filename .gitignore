@@ -27,6 +27,5 @@ instance/
 *.log
 
 # Environment config files (DO NOT PUSH SECRETS)
-config.py
 .env
 .env.local
