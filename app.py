@@ -29,7 +29,8 @@ def get_db():
         host=DB_CONFIG["host"],
         user=DB_CONFIG["user"],
         password=DB_CONFIG["password"],
-        dbname=DB_CONFIG["database"]
+        dbname=DB_CONFIG["database"],
+        cursor_factory=psycopg2.extras.DictCursor
     )
     return conn
 
@@ -78,7 +79,7 @@ def register():
             conn.commit()
             flash("Registered! Please login.", "success")
             return redirect(url_for("login"))
-        except pymysql.err.IntegrityError:
+        except psycopg2.IntegrityError:
             conn.rollback()
             flash("Email already exists", "danger")
             return redirect(url_for("register"))
@@ -261,7 +262,7 @@ def api_create_student():
         )
         conn.commit()
         return jsonify({"msg": "created"}), 201
-    except pymysql.err.IntegrityError as e:
+    except psycopg2.IntegrityError as e:
         conn.rollback()
         return jsonify({"msg": "duplicate or DB error", "error": str(e)}), 400
     finally:
@@ -306,7 +307,7 @@ def api_update_student(sid):
         )
         conn.commit()
         return jsonify({"msg": "updated"}), 200
-    except pymysql.err.IntegrityError as e:
+    except psycopg2.IntegrityError as e:
         conn.rollback()
         return jsonify({"msg": "duplicate or DB error", "error": str(e)}), 400
     finally:
@@ -351,7 +352,7 @@ def api_register():
         cur.execute("INSERT INTO users (username,email,password_hash,role) VALUES (%s,%s,%s,%s)", (username, email, pw_hash, role))
         conn.commit()
         return jsonify({"msg": "registered"}), 201
-    except pymysql.err.IntegrityError:
+    except psycopg2.IntegrityError:
         conn.rollback()
         return jsonify({"msg": "email exists"}), 400
     finally:
