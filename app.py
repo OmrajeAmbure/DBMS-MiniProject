@@ -4,7 +4,8 @@ from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_required,
     get_jwt_identity, get_jwt, set_access_cookies, unset_jwt_cookies
 )
-import pymysql
+import psycopg2
+import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import DB_CONFIG, SECRET_KEY, JWT_SECRET_KEY
 from datetime import timedelta
@@ -24,13 +25,11 @@ jwt = JWTManager(app)
 
 
 def get_db():
-    conn = pymysql.connect(
+    conn = psycopg2.connect(
         host=DB_CONFIG["host"],
         user=DB_CONFIG["user"],
         password=DB_CONFIG["password"],
-        database=DB_CONFIG["database"],
-        cursorclass=pymysql.cursors.DictCursor,
-        autocommit=False
+        dbname=DB_CONFIG["database"]
     )
     return conn
 
